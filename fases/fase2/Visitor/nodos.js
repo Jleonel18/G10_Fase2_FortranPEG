@@ -173,4 +173,37 @@ export class Literal  {
     }
 }
     
-export default { Producciones, Opciones, Union, Expression, Literal }
+export class Expresiones  {
+
+    /**
+    * @param {Object} options
+    * @param {Expresion} options.exp Expresion
+ * @param {string|undefined} options.sense Case sensitive
+    */
+    constructor({ exp, sense }) {
+        
+        
+        /**
+         * Expresion
+         * @type {Expresion}
+        */
+        this.exp = exp;
+
+
+        /**
+         * Case sensitive
+         * @type {string|undefined}
+        */
+        this.sense = sense;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitExpresiones(this);
+    }
+}
+    
+export default { Producciones, Opciones, Union, Expression, Literal, Expresiones }

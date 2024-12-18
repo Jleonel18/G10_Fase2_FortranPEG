@@ -41,6 +41,13 @@ export class GeneradorVisitor extends BaseVisitor {
     }
 
     /**
+     * @type {BaseVisitor['visitExpresiones']}
+     */
+    visitExpresiones(node) {
+        node.exp.accept(this)
+    }
+
+    /**
      * @type {BaseVisitor['visitLiteral']}
      */
     visitLiteral(node) {

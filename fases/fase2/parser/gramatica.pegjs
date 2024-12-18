@@ -15,7 +15,8 @@
             'opciones': nodos.Opciones,
             'union': nodos.Union,
             'expresion': nodos.Expression,
-            'literal': nodos.Literal
+            'literal': nodos.Literal,
+            'expresiones': nodos.Expresiones
         }
 
         const nodo = new tipos[tipoNodo](props)
@@ -47,14 +48,14 @@ opciones = primero:union mas:(_ "/" _ @union)* { return nuevoNodo("opciones", { 
 
 union = primero:expresion mas:(_ @expresion !(_ literales? _ "=") )* { return nuevoNodo("union", { expresiones:[primero, ...mas] }) }
 
-expresion  = prev:(etiqueta/varios)? _ exp:expresiones _ post:(@[?+*]/conteo)? { nuevoNodo("expresion", { prev, exp, post } ) }
+expresion  = prev:(etiqueta/varios)? _ exp:expresiones _ post:(@[?+*]/conteo)? { return nuevoNodo("expresion", { prev, exp, post } ) }
 
 etiqueta = pluck:("@")? _ id:identificador _ ":" simb:(varios)? { return { pluck: pluck ? true : false, id, simb } }
 
 varios = op:("!"/"$"/"@"/"&") { return op }
 
 expresiones  =  id:identificador { usos.push(id) }
-                / literales "i"?
+                / exp:literales sense:"i"? { return nuevoNodo("expresiones", { exp, sense }) }
                 / "(" _ opciones _ ")"
                 / corchetes "i"?
                 / "."
@@ -103,15 +104,15 @@ corchete
 texto
     = [^\[\]]+
 
-literales = '"' value:stringDobleComilla* '"' { nuevoNodo("literal", { valor: value.join("") }) }
-            / "'" value:stringSimpleComilla* "'" { nuevoNodo("literal", { valor: value.join("") }) }
+literales = '"' value:stringDobleComilla* '"' { return nuevoNodo("literal", { valor: value.join("") }) }
+            / "'" value:stringSimpleComilla* "'" { return nuevoNodo("literal", { valor: value.join("") }) }
 
-stringDobleComilla = !('"' / "\\" / finLinea) .
-                    / "\\" escape
+stringDobleComilla = !('"' / "\\" / finLinea) . { return text() }
+                    / "\\" esc:escape { return esc }
                     / continuacionLinea
 
-stringSimpleComilla = !("'" / "\\" / finLinea) .
-                    / "\\" escape
+stringSimpleComilla = !("'" / "\\" / finLinea) . { return text() }
+                    / "\\" esc:escape { return esc }
                     / continuacionLinea
 
 continuacionLinea = "\\" secuenciaFinLinea

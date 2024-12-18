@@ -42,7 +42,7 @@ const analizar = () => {
 
         const generador = new GeneradorVisitor()
 
-        cst.forEach(sent => sent.accept(generador))
+        cst.prod.forEach(sent => sent.accept(generador))
 
         console.log(generador.code)
 
@@ -59,7 +59,7 @@ const analizar = () => {
         // Limpiar decoraciones previas si la validación es exitosa
         decorations = editor.deltaDecorations(decorations, []);
     } catch (e) {
-
+        console.log(e)
         if(e.location === undefined){
             
             salida.setValue(
