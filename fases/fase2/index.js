@@ -44,7 +44,6 @@ const analizar = () => {
 
         cst.prod.forEach(sent => sent.accept(generador))
 
-        console.log(generador.code)
 
         if(errores.length > 0){
             salida.setValue(
@@ -53,6 +52,7 @@ const analizar = () => {
             return
         }else{
             salida.setValue("Análisis Exitoso");
+            console.log(generarFortran(generador.code))
         }
 
         // salida.setValue("Análisis Exitoso");
@@ -123,3 +123,46 @@ style.innerHTML = `
     }
 `;
 document.head.appendChild(style);
+
+const generarFortran=(code)=>{
+    let salida = `
+    module parser
+    
+        implicit none
+
+        contains
+
+        function nextsym(input, cursor) result(token)
+
+            character(len=*), intent(in) :: input
+            integer, intent(inout) :: cursor
+            character(len=:), allocatable :: token
+            integer :: start_cursor
+        
+            logical :: has_token
+        
+            token = ""
+            has_token = .false.
+
+            if(cursor > len_trim(input)) then
+                token = "EOF"
+                has_token = .true.
+                return
+            else
+
+                ${code}
+
+                if (.not. has_token) then
+                token = "Indefinido | ERROR LEXICO ->"//input(cursor:cursor)
+                cursor = cursor + 1
+                return
+            end if
+
+            end if
+    
+        end function nextsym
+
+    end module parser`
+
+    return salida
+}

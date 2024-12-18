@@ -153,8 +153,9 @@ export class Literal  {
     /**
     * @param {Object} options
     * @param {string} options.valor Valor del literal
+ * @param {string|undefined} options.sense Case insensitive
     */
-    constructor({ valor }) {
+    constructor({ valor, sense }) {
         
         
         /**
@@ -162,6 +163,13 @@ export class Literal  {
          * @type {string}
         */
         this.valor = valor;
+
+
+        /**
+         * Case insensitive
+         * @type {string|undefined}
+        */
+        this.sense = sense;
 
     }
 
@@ -178,9 +186,8 @@ export class Expresiones  {
     /**
     * @param {Object} options
     * @param {Expresion} options.exp Expresion
- * @param {string|undefined} options.sense Case sensitive
     */
-    constructor({ exp, sense }) {
+    constructor({ exp }) {
         
         
         /**
@@ -188,13 +195,6 @@ export class Expresiones  {
          * @type {Expresion}
         */
         this.exp = exp;
-
-
-        /**
-         * Case sensitive
-         * @type {string|undefined}
-        */
-        this.sense = sense;
 
     }
 

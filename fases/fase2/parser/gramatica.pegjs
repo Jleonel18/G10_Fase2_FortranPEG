@@ -55,7 +55,7 @@ etiqueta = pluck:("@")? _ id:identificador _ ":" simb:(varios)? { return { pluck
 varios = op:("!"/"$"/"@"/"&") { return op }
 
 expresiones  =  id:identificador { usos.push(id) }
-                / exp:literales sense:"i"? { return nuevoNodo("expresiones", { exp, sense }) }
+                / expe:literales sense:"i"? { return nuevoNodo("expresiones", { exp:nuevoNodo("literal",{valor:expe,sense})}) }
                 / "(" _ opciones _ ")"
                 / corchetes "i"?
                 / "."
@@ -104,8 +104,8 @@ corchete
 texto
     = [^\[\]]+
 
-literales = '"' value:stringDobleComilla* '"' { return nuevoNodo("literal", { valor: value.join("") }) }
-            / "'" value:stringSimpleComilla* "'" { return nuevoNodo("literal", { valor: value.join("") }) }
+literales = '"' value:stringDobleComilla* '"' { return value.join("") }
+            / "'" value:stringSimpleComilla* "'" { return value.join("") }
 
 stringDobleComilla = !('"' / "\\" / finLinea) . { return text() }
                     / "\\" esc:escape { return esc }

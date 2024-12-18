@@ -286,7 +286,7 @@ function peg$parse(input, options) {
   var peg$f5 = function(pluck, id, simb) { return { pluck: pluck ? true : false, id, simb } };
   var peg$f6 = function(op) { return op };
   var peg$f7 = function(id) { usos.push(id) };
-  var peg$f8 = function(exp, sense) { return nuevoNodo("expresiones", { exp, sense }) };
+  var peg$f8 = function(expe, sense) { return nuevoNodo("expresiones", { exp:nuevoNodo("literal",{valor:expe,sense})}) };
   var peg$f9 = function(contenido) {
         return `Entrada válida: [${input}]`;
     };
@@ -298,8 +298,8 @@ function peg$parse(input, options) {
         return `${inicio}-${fin}`;
     };
   var peg$f11 = function() { return text()};
-  var peg$f12 = function(value) { return nuevoNodo("literal", { valor: value.join("") }) };
-  var peg$f13 = function(value) { return nuevoNodo("literal", { valor: value.join("") }) };
+  var peg$f12 = function(value) { return value.join("") };
+  var peg$f13 = function(value) { return value.join("") };
   var peg$f14 = function() { return text() };
   var peg$f15 = function(esc) { return esc };
   var peg$f16 = function() { return text() };

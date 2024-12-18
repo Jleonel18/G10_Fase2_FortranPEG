@@ -51,12 +51,17 @@ export class GeneradorVisitor extends BaseVisitor {
      * @type {BaseVisitor['visitLiteral']}
      */
     visitLiteral(node) {
-        this.code += `if ( "${node.valor}" == input(cursor:cursor + ${node.valor.length - 1 } )) then
-            allocate( character(len=${node.valor.length}) :: lexeme)
-            lexeme = input(cursor:cursor + ${node.valor.length - 1 })
-            cursor = cursor + ${node.valor.length}}
-            return
-        end if`
+
+        if(node.sense == undefined){
+            this.code += `\n if (cursor + ${node.valor.length-1} <= len(input)) then
+                if (input(cursor:cursor+${node.valor.length-1}) == "${node.valor}") then
+                    token = "cadena | ${node.valor}"
+                    has_token = .true.
+                    cursor = cursor + ${node.valor.length}
+                    return
+                end if
+            end if \n`
+        }
         
     }
 
