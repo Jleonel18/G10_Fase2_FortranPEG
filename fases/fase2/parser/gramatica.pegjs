@@ -6,10 +6,16 @@
     import { ids, usos} from '../index.js'
     import { ErrorReglas } from './error.js';
     import { errores } from '../index.js'
-}
+}}
+
+{
     const nuevoNodo =(tipoNodo, props) => {
         const tipos = {
-            "producciones": nodos.Producciones
+            'producciones': nodos.Producciones,
+            'opciones': nodos.Opciones,
+            'union': nodos.Union,
+            'expresion': nodos.Expression,
+            'literal': nodos.Literal
         }
 
         const nodo = new tipos[tipoNodo](props)
@@ -19,7 +25,7 @@
 
 }
 
-gramatica = _ producciones+ _ {
+gramatica = _ prod:producciones+ _ {
 
     let duplicados = ids.filter((item, index) => ids.indexOf(item) !== index);
     if (duplicados.length > 0) {
@@ -31,20 +37,21 @@ gramatica = _ producciones+ _ {
     if (noEncontrados.length > 0) {
         errores.push(new ErrorReglas("Regla no encontrada: " + noEncontrados[0]));
     }
+
+    return { prod }
 }
 
-producciones = _ id:identificador _ alias:(literales)? _ "=" _ opciones:opciones (_";")? { ids.push(id) return crearNodo("producciones", {id, alias,opciones}) }
-           
+producciones = _ id:identificador _ alias:(literales)? _ "=" _ opciones:opciones (_";")? { ids.push(id); return nuevoNodo("producciones", { id, alias,opciones }) }
 
-opciones = union (_ "/" _ union)*
+opciones = primero:union mas:(_ "/" _ @union)* { return nuevoNodo("opciones", { opciones:[primero, ...mas] }) }
 
-union = expresion (_ expresion !(_ literales? _ "=") )*
+union = primero:expresion mas:(_ @expresion !(_ literales? _ "=") )* { return nuevoNodo("union", { expresiones:[primero, ...mas] }) }
 
-expresion  = (etiqueta/varios)? _ expresiones _ ([?+*]/conteo)?
+expresion  = prev:(etiqueta/varios)? _ exp:expresiones _ post:(@[?+*]/conteo)? { nuevoNodo("expresion", { prev, exp, post } ) }
 
-etiqueta = ("@")? _ id:identificador _ ":" (varios)?
+etiqueta = pluck:("@")? _ id:identificador _ ":" simb:(varios)? { return { pluck: pluck ? true : false, id, simb } }
 
-varios = ("!"/"$"/"@"/"&")
+varios = op:("!"/"$"/"@"/"&") { return op }
 
 expresiones  =  id:identificador { usos.push(id) }
                 / literales "i"?
@@ -96,8 +103,8 @@ corchete
 texto
     = [^\[\]]+
 
-literales = '"' stringDobleComilla* '"'
-            / "'" stringSimpleComilla* "'"
+literales = '"' value:stringDobleComilla* '"' { nuevoNodo("literal", { valor: value.join("") }) }
+            / "'" value:stringSimpleComilla* "'" { nuevoNodo("literal", { valor: value.join("") }) }
 
 stringDobleComilla = !('"' / "\\" / finLinea) .
                     / "\\" escape

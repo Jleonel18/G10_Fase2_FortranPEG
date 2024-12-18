@@ -1,6 +1,7 @@
 import * as monaco from 'https://cdn.jsdelivr.net/npm/monaco-editor@0.50.0/+esm';
 import { parse } from './parser/gramatica.js';
 import { ErrorReglas } from './parser/error.js';
+import { GeneradorVisitor } from './Visitor/generador.js';
 
 
 export let ids = []
@@ -38,6 +39,12 @@ const analizar = () => {
     errores.length = 0
     try {
         const cst = parse(entrada)
+
+        const generador = new GeneradorVisitor()
+
+        cst.forEach(sent => sent.accept(generador))
+
+        console.log(generador.code)
 
         if(errores.length > 0){
             salida.setValue(
