@@ -1,5 +1,4 @@
 {{
-    
     // let identificadores = []
 
     // import { identificadores } from '../index.js'
@@ -7,7 +6,18 @@
     import { ids, usos} from '../index.js'
     import { ErrorReglas } from './error.js';
     import { errores } from '../index.js'
-}}
+}
+    const nuevoNodo =(tipoNodo, props) => {
+        const tipos = {
+            "producciones": nodos.Producciones
+        }
+
+        const nodo = new tipos[tipoNodo](props)
+        nodo.location = location()
+        return nodo
+    }
+
+}
 
 gramatica = _ producciones+ _ {
 
@@ -23,7 +33,8 @@ gramatica = _ producciones+ _ {
     }
 }
 
-producciones = _ id:identificador _ (literales)? _ "=" _ opciones (_";")? { ids.push(id) }
+producciones = _ id:identificador _ alias:(literales)? _ "=" _ opciones:opciones (_";")? { ids.push(id) return crearNodo("producciones", {id, alias,opciones}) }
+           
 
 opciones = union (_ "/" _ union)*
 
