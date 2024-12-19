@@ -52,7 +52,7 @@ const analizar = () => {
             return
         }else{
             salida.setValue("Análisis Exitoso");
-            console.log(generarFortran(generador.code))
+            console.log(generarFortran(generador.code, generador.funciones))
         }
 
         // salida.setValue("Análisis Exitoso");
@@ -124,7 +124,7 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
-const generarFortran=(code)=>{
+const generarFortran=(code, funciones)=>{
     let salida = `
     module parser
     
@@ -161,6 +161,8 @@ const generarFortran=(code)=>{
             end if
     
         end function nextsym
+
+        ${funciones}
 
     end module parser`
 

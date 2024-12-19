@@ -21,59 +21,46 @@ module parser
             has_token = .true.
             return
         else
-            ! Verificar si la subcadena es un espacio
-            if (cursor <= len_trim(input) .and. input(cursor:cursor) == " ") then
-                token = "whitespace | ESPACIO"
-                cursor = cursor + 1
-                return  ! Exit the function after detecting space
-            end if
-        
-            ! Verificar si la subcadena es "hola"
-            if (cursor + 3 <= len(input)) then
-                if (input(cursor:cursor+3) == "hola") then
-                    token = "cadena | hola"
-                    has_token = .true.
-                    cursor = cursor + 4
-                    return
-                end if
-            end if
-        
-            ! Verificar si es un dígito [a-b] o [a-b]?
-            !if (iachar(input(cursor:cursor)) >= iachar('0') .and. iachar(input(cursor:cursor)) <= iachar('9')) then
-            !    token = "cadena[a-b](?) | "// input(cursor:cursor)
-            !    has_token = .true.
-            !    cursor = cursor + 1
-            !    return
-            !end if
-    
-    
-            ! Verificar si es un rango [a-b]+ o [a-b]*
-            if ((iachar(input(cursor:cursor)) >= iachar('0') .and. iachar(input(cursor:cursor)) <= iachar('9'))) then
-                ! Capturar todo el rango de caracteres consecutivos
-                start_cursor = cursor
-                
-                ! Continuar mientras los caracteres estén en el rango [a-b]
-                do while (cursor <= len(input) .and. &
-                        (iachar(input(cursor:cursor)) >= iachar('0') .and. &
-                        iachar(input(cursor:cursor)) <= iachar('9')))
-                    cursor = cursor + 1
-                end do
-                
-                ! Extraer el token completo
-                token = "numero[0-9](*+) | "// input(start_cursor:cursor-1)
+
+            
+if (cursor + 3 <= len(input)) then
+            if (ToLower(input(cursor:cursor+3)) == ToLower("hola")) then
+                token = "cadena | hola"
                 has_token = .true.
+                cursor = cursor + 4
                 return
             end if
-    
-                
+        end if 
+
+
             if (.not. has_token) then
-                token = "Indefinido | ERROR LEXICO ->"//input(cursor:cursor)
-                cursor = cursor + 1
-                return
-            end if
+            token = "Indefinido | ERROR LEXICO ->"//input(cursor:cursor)
+            cursor = cursor + 1
+            return
+        end if
 
         end if
-    
+
     end function nextsym
+
+    
+
+        function ToLower(str) result(lowerStr)
+            character(len=*), intent(in) :: str
+            character(len=len(str)) :: lowerStr
+            integer :: i
+
+            ! Inicializar la cadena de salida
+            lowerStr = str
+
+            ! Convertir a minúsculas
+            do i = 1, len_trim(str)
+                if (ichar(str(i:i)) >= ichar('A') .AND. ichar(str(i:i)) <= ichar('Z')) THEN
+                    lowerStr(i:i) = char(ichar(str(i:i)) + 32)
+                end if
+            end do
+        end function ToLower
+
+        
 
 end module parser
