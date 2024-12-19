@@ -150,7 +150,7 @@ const generarFortran=(code)=>{
             character(len=*), intent(in) :: input
             integer, intent(inout) :: cursor
             character(len=:), allocatable :: token
-            integer :: start_cursor
+            integer :: start_cursor, repeat_count
             character(len=:), allocatable :: temp_string
             character(len=:), allocatable :: original_string
         
