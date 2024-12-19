@@ -57,7 +57,7 @@ varios = op:("!"/"$"/"@"/"&") { return op }
 expresiones  =  id:identificador { usos.push(id) }
                 / exp:literales sense:"i"? { return { tipo:'literal', exp, sense } }
                 / "(" _ opciones _ ")"
-                / corchetes "i"?
+                / exp:corchetes sense:"i"? {return { tipo:'corchetes', exp, sense } }
                 / "."
                 / "!."
 
@@ -77,7 +77,7 @@ conteo = "|" _ (numero / id:identificador) _ "|"
 // Regla principal que analiza corchetes con contenido
 corchetes
     = "[" contenido:(rango / contenido)+ "]" {
-        return `Entrada válida: [${input}]`;
+        return contenido
     }
 
 // Regla para validar un rango como [A-Z]
@@ -87,9 +87,9 @@ rango
             throw new Error(`Rango inválido: [${inicio}-${fin}]`);
 
         }
-        return `${inicio}-${fin}`;
+        return {contenido:`${inicio}-${fin}`,rango:true};
     }
-
+//[0,2,4,a,-,z]
 // Regla para caracteres individuales
 caracter
     = [a-zA-Z0-9_ ] { return text()}
@@ -99,7 +99,7 @@ contenido
     = (corchete / texto)+
 
 corchete
-    = "[" contenido "]"
+    = "[" contenido "]"   
 
 texto
     = [^\[\]]+

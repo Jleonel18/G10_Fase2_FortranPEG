@@ -1,6 +1,5 @@
-
-module parser
-        
+module parserrrrr
+    
     implicit none
 
     contains
@@ -69,4 +68,4 @@ module parser
         end do
     end function ToLower
 
-end module parser
+end module parserrr

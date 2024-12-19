@@ -6,7 +6,7 @@ program main
     integer :: i
 
     ! Definir un valor de prueba para input_string
-    input_string = "holaholahola 1"
+    input_string = "holaholahola 1 j jjj 1 jjjjjj"
     i = 1
 
     ! Llamar a la función nextsym y almacenar el resultado en token
