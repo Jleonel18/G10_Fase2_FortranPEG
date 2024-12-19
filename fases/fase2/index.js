@@ -52,7 +52,7 @@ const analizar = () => {
             return
         }else{
             salida.setValue("Análisis Exitoso");
-            console.log(generarFortran(generador.code, generador.funciones))
+            console.log(generarFortran(generador.code))
         }
 
         // salida.setValue("Análisis Exitoso");
@@ -124,7 +124,7 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
-const generarFortran=(code, funciones)=>{
+const generarFortran=(code)=>{
     let salida = `
     module parser
     
@@ -138,6 +138,8 @@ const generarFortran=(code, funciones)=>{
             integer, intent(inout) :: cursor
             character(len=:), allocatable :: token
             integer :: start_cursor
+            character(len=:), allocatable :: temp_string
+            character(len=:), allocatable :: original_string
         
             logical :: has_token
         
@@ -162,7 +164,21 @@ const generarFortran=(code, funciones)=>{
     
         end function nextsym
 
-        ${funciones}
+        function ToLower(str) result(lowerStr)
+                character(len=*), intent(in) :: str
+                character(len=len(str)) :: lowerStr
+                integer :: i
+
+                ! Inicializar la cadena de salida
+                lowerStr = str
+
+                ! Convertir a minúsculas
+                do i = 1, len_trim(str)
+                    if (ichar(str(i:i)) >= ichar('A') .AND. ichar(str(i:i)) <= ichar('Z')) then
+                        lowerStr(i:i) = char(ichar(str(i:i)) + 32)
+                    end if
+                end do
+        end function ToLower
 
     end module parser`
 
