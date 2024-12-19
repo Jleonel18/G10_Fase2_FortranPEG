@@ -3,16 +3,19 @@ program main
     implicit none
 
     character(len=100) :: input_string, token
-    integer :: i = 0
+    integer :: i
 
     ! Definir un valor de prueba para input_string
-    input_string = " holaHOLA"
+    input_string = "hoLa 2 holA hoLgA HoLa Helo"
+    i = 1
 
-    i=1
     ! Llamar a la función nextsym y almacenar el resultado en token
-    do while(i<= (len_trim(input_string)))
+    print *, "Procesando la cadena: ", trim(input_string)
+    do while (i <= len_trim(input_string))
         token = nextsym(input_string, i)
-        print *, 'Token extraido: ', Token
+        print *, 'Token extraído: ', trim(token)
+        if (token == "EOF") exit
     end do
 
 end program main
+
