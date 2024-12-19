@@ -112,7 +112,7 @@ export class Expression  {
     /**
     * @param {Object} options
     * @param {string|object|undefined} options.prev Previo a la expresion
- * @param {Expresion} options.exp Expresion
+ * @param {Object} options.exp Expresion
  * @param {string|undefined} options.post Posterior a la expresion
     */
     constructor({ prev, exp, post }) {
@@ -127,7 +127,7 @@ export class Expression  {
 
         /**
          * Expresion
-         * @type {Expresion}
+         * @type {Object}
         */
         this.exp = exp;
 

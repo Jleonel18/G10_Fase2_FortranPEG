@@ -36,7 +36,40 @@ export class GeneradorVisitor extends BaseVisitor {
      */
     visitExpression(node) {
 
-        node.exp.accept(this)
+        const expresion = node.exp
+
+        switch(expresion.tipo) {
+            case 'literal':
+                
+                if(expresion.sense == undefined){
+                    this.code += `\n if (cursor + ${expresion.exp.length-1} <= len(input)) then
+                        if (input(cursor:cursor+${expresion.exp.length-1}) == "${expresion.exp}") then
+                            token = "cadena | ${expresion.exp}"
+                            has_token = .true.
+                            cursor = cursor + ${expresion.exp.length}
+                            return
+                        end if
+                    end if \n`
+                }else{
+                    this.code += `\n ! Crear una cadena temporal para comparar
+                    if (cursor + ${expresion.exp.length-1} <= len_trim(input)) then
+                        temp_string = ToLower(input(cursor:cursor+${expresion.exp.length-1}))
+                        original_string = input(cursor:cursor+${expresion.exp.length-1})
+                        if (temp_string == "${expresion.exp}") then
+                            token = "cadena | "//trim(original_string)  ! Mantener el formato original
+                            has_token = .true.
+                            cursor = cursor + ${expresion.exp.length}
+                            return
+                        end if
+                    end if\n`
+        
+                }
+
+                break;
+            
+        }
+
+        // node.exp.accept(this)
 
     }
 

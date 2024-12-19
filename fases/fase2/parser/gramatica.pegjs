@@ -55,7 +55,7 @@ etiqueta = pluck:("@")? _ id:identificador _ ":" simb:(varios)? { return { pluck
 varios = op:("!"/"$"/"@"/"&") { return op }
 
 expresiones  =  id:identificador { usos.push(id) }
-                / expe:literales sense:"i"? { return nuevoNodo("expresiones", { exp:nuevoNodo("literal",{valor:expe,sense})}) }
+                / exp:literales sense:"i"? { return { tipo:'literal', exp, sense } }
                 / "(" _ opciones _ ")"
                 / corchetes "i"?
                 / "."

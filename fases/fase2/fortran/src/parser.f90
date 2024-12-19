@@ -1,4 +1,5 @@
-module parser
+
+    module parser
     
         implicit none
 
@@ -26,28 +27,16 @@ module parser
 
                 
  ! Crear una cadena temporal para comparar
-            if (cursor + 3 <= len_trim(input)) then
-                temp_string = ToLower(input(cursor:cursor+3))
-                original_string = input(cursor:cursor+3)
-                if (temp_string == "hola") then
-                    token = "cadena | "//trim(original_string)  ! Mantener el formato original
-                    has_token = .true.
-                    cursor = cursor + 4
-                    return
-                end if
-            end if
-
- ! Crear una cadena temporal para comparar
-            if (cursor + 4 <= len_trim(input)) then
-                temp_string = ToLower(input(cursor:cursor+4))
-                original_string = input(cursor:cursor+4)
-                if (temp_string == "adios") then
-                    token = "cadena | "//trim(original_string)  ! Mantener el formato original
-                    has_token = .true.
-                    cursor = cursor + 5
-                    return
-                end if
-            end if
+                    if (cursor + 3 <= len_trim(input)) then
+                        temp_string = ToLower(input(cursor:cursor+3))
+                        original_string = input(cursor:cursor+3)
+                        if (temp_string == "hola") then
+                            token = "cadena | "//trim(original_string)  ! Mantener el formato original
+                            has_token = .true.
+                            cursor = cursor + 4
+                            return
+                        end if
+                    end if
 
 
                 if (.not. has_token) then
@@ -60,9 +49,7 @@ module parser
     
         end function nextsym
 
-        
-
-            function ToLower(str) result(lowerStr)
+        function ToLower(str) result(lowerStr)
                 character(len=*), intent(in) :: str
                 character(len=len(str)) :: lowerStr
                 integer :: i
@@ -76,10 +63,6 @@ module parser
                         lowerStr(i:i) = char(ichar(str(i:i)) + 32)
                     end if
                 end do
-            end function ToLower
-
-        
-
-            
+        end function ToLower
 
     end module parser
