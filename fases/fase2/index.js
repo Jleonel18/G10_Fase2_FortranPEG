@@ -8,6 +8,7 @@ export let ids = []
 export let usos = []
 export let errores = []
 
+const btnDescargar = document.getElementById('descargar');
 
 // Crear el editor principal
 const editor = monaco.editor.create(
@@ -30,6 +31,18 @@ const salida = monaco.editor.create(
 );
 
 let decorations = [];
+let codigoFuente = ``;
+
+// Descargar archivo
+btnDescargar.addEventListener('click', () => {
+    const contenido = codigoFuente
+    const blob = new Blob([contenido], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'parser.f90';
+    a.click();
+});
 
 // Analizar contenido del editor
 const analizar = () => {
@@ -125,7 +138,7 @@ style.innerHTML = `
 document.head.appendChild(style);
 
 const generarFortran=(code)=>{
-    let salida = `
+    codigoFuente = `
     module parser
     
         implicit none
@@ -182,5 +195,5 @@ const generarFortran=(code)=>{
 
     end module parser`
 
-    return salida
+    return codigoFuente
 }
