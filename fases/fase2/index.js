@@ -40,7 +40,7 @@ btnDescargar.addEventListener('click', () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'parser.f90';
+    a.download = 'tokenizer.f90';
     a.click();
 });
 
@@ -139,7 +139,7 @@ document.head.appendChild(style);
 
 const generarFortran=(code)=>{
     codigoFuente = `
-    module parser
+    module tokenizer
     
         implicit none
 
@@ -153,6 +153,7 @@ const generarFortran=(code)=>{
             integer :: start_cursor, repeat_count
             character(len=:), allocatable :: temp_string
             character(len=:), allocatable :: original_string
+            integer :: i
         
             logical :: has_token
         
@@ -168,7 +169,8 @@ const generarFortran=(code)=>{
                 ${code}
 
                 if (.not. has_token) then
-                token = "Indefinido | ERROR LEXICO ->"//input(cursor:cursor)
+                print *, "ERROR LEXICO -> ", '"'// input(cursor:cursor) // '"'
+                token = "ERROR"
                 cursor = cursor + 1
                 return
             end if
@@ -193,7 +195,7 @@ const generarFortran=(code)=>{
                 end do
         end function ToLower
 
-    end module parser`
+    end module tokenizer`
 
     return codigoFuente
 }

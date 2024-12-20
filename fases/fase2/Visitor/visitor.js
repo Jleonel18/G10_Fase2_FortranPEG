@@ -18,6 +18,9 @@
 
  * @typedef {import('./nodos').Expresiones} Expresiones
 
+
+ * @typedef {import('./nodos').Rango} Rango
+
  */
 
 
@@ -79,6 +82,15 @@ export class BaseVisitor {
      */
     visitExpresiones(node) {
         throw new Error('Metodo visitExpresiones no implementado');
+    }
+    
+
+    /**
+     * @param {Rango} node
+     * @returns {any}
+     */
+    visitRango(node) {
+        throw new Error('Metodo visitRango no implementado');
     }
     
 }

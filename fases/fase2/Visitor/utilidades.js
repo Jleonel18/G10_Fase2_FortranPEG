@@ -61,3 +61,18 @@ export const cerraduras =(cerradura,expresion)=>{
     }
 }
 
+export const generarCaracteres = (caracteres) => {
+    if (caracteres.length === 0) return ''
+
+    return `
+    if (findloc([${caracteres
+        .map((caracter) => `"${caracter}"`)
+        .join(', ')}], input(i:i), 1) > 0) then
+        token = input(cursor:i)
+        cursor = i + 1
+        has_token = .true.
+        return
+    end if
+    `
+}
+

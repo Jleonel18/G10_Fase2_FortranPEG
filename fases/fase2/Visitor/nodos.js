@@ -206,4 +206,37 @@ export class Expresiones  {
     }
 }
     
-export default { Producciones, Opciones, Union, Expression, Literal, Expresiones }
+export class Rango  {
+
+    /**
+    * @param {Object} options
+    * @param {string} options.inicio Inicio del rango
+ * @param {string} options.fin Fin del rango
+    */
+    constructor({ inicio, fin }) {
+        
+        
+        /**
+         * Inicio del rango
+         * @type {string}
+        */
+        this.inicio = inicio;
+
+
+        /**
+         * Fin del rango
+         * @type {string}
+        */
+        this.fin = fin;
+
+    }
+
+    /**
+     * @param {BaseVisitor} visitor
+     */
+    accept(visitor) {
+        return visitor.visitRango(this);
+    }
+}
+    
+export default { Producciones, Opciones, Union, Expression, Literal, Expresiones, Rango }

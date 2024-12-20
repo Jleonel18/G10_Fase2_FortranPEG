@@ -1,21 +1,14 @@
 program main
-    use parser
+    use tokenizer
     implicit none
 
-    character(len=100) :: input_string, token
-    integer :: i
+    character(len=*), parameter :: input = "13240;-"
+    character(len=:), allocatable :: lexeme
+    integer :: cursor
 
-    ! Definir un valor de prueba para input_string
-    input_string = "holaholahola 1 j jjj 1 jjjjjj"
-    i = 1
-
-    ! Llamar a la función nextsym y almacenar el resultado en token
-    print *, "Procesando la cadena: ", trim(input_string)
-    do while (i <= len_trim(input_string))
-        token = nextsym(input_string, i)
-        print *, 'Token extraído: ', trim(token)
-        if (token == "EOF") exit
+    cursor = 1
+    do while (lexeme /= "EOF" .and. lexeme /= "ERROR")
+        lexeme = nextsym(input, cursor)
+        print *, lexeme
     end do
-
 end program main
-

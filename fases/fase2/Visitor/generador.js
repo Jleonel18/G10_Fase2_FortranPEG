@@ -1,5 +1,6 @@
 import { BaseVisitor } from './visitor.js';
-import { cerraduras } from './utilidades.js';
+import { cerraduras, generarCaracteres } from './utilidades.js';
+import { Rango } from './nodos.js';
 
 
 export class GeneradorVisitor extends BaseVisitor {
@@ -73,41 +74,17 @@ export class GeneradorVisitor extends BaseVisitor {
 
                 break;
             case 'corchetes':
-                //Cuando me viene un rango facil de la manera [x-x]
-                if(node.exp.exp[0].rango != undefined){
 
-                    this.code += `\n ! Crear una cadena temporal para comparar
-                        if ((iachar(input(cursor:cursor)) >= iachar('${node.exp.exp[0].contenido.charAt(0)}') .and. iachar(input(cursor:cursor)) <= iachar('${node.exp.exp[0].contenido.charAt(2)}'))) then
-                        !Capturar todo el rango de caracteres consecutivos
-                        start_cursor = cursor
-                            
-                        !Continuar mientras los caracteres estén en el rango [a-b]
-                            do while (cursor <= len(input) .and. &
-                                    (iachar(input(cursor:cursor)) >= iachar('${node.exp.exp[0].contenido.charAt(0)}') .and. &
-                                    iachar(input(cursor:cursor)) <= iachar('${node.exp.exp[0].contenido.charAt(2)}')))
-                                cursor = cursor + 1
-                            end do
-
-                            ! Verificar si es un dígito [a-b] o [a-b]?
-                            if (iachar(input(cursor:cursor)) >= iachar('${node.exp.exp[0].contenido.charAt(0)}') .and. iachar(input(cursor:cursor)) <= iachar('${node.exp.exp[0].contenido.charAt(2)}')) then
-                                token = "cadena[a-b](?) | "// input(cursor:cursor)
-                                has_token = .true.
-                                cursor = cursor + 1
-                                return
-                            end if
-                            
-                            ! Extraer el token completo
-                            token = "numero[0-9](*+) | "// input(start_cursor:cursor-1)
-                            has_token = .true.
-                            return
-                        end if
-                \n`
-                    
-                } 
-                //Cuando me viene un rango combinado con caracters
-                else{
-           
+                if(node.post == undefined){
+                    this.code += `
+                    i = cursor
+                    ${generarCaracteres(node.exp.exp.filter((node) => typeof node === 'string'))}
+                    ${node.exp.exp.filter((node) => node instanceof Rango)
+                        .map((rango) => rango.accept(this))
+                        .join('\n')}
+                    `
                 }
+
                 break;
             
         }
@@ -153,6 +130,20 @@ export class GeneradorVisitor extends BaseVisitor {
         }
         
         
+    }
+
+    /**
+     * @type {BaseVisitor['visitRango']}
+     */
+    visitRango(node) {
+        return `
+        if (input(i:i) >= "${node.inicio}" .and. input(i:i) <= "${node.fin}") then
+            token = input(cursor:i)
+            cursor = i + 1
+            has_token = .true.
+            return
+        end if
+        `
     }
 
 }

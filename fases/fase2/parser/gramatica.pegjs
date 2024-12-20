@@ -16,7 +16,8 @@
             'union': nodos.Union,
             'expresion': nodos.Expression,
             'literal': nodos.Literal,
-            'expresiones': nodos.Expresiones
+            'expresiones': nodos.Expresiones,
+            'rango': nodos.Rango
         }
 
         const nodo = new tipos[tipoNodo](props)
@@ -76,33 +77,40 @@ conteo = "|" _ (numero / id:identificador) _ "|"
 
 // Regla principal que analiza corchetes con contenido
 corchetes
-    = "[" contenido:(rango / contenido)+ "]" {
-        return contenido
-    }
+    = "[" @contenido+ "]" 
+
+contenido = inicio:$[^\[\]] "-" fin:$[^\[\]] {
+            if (inicio.charCodeAt(0) > fin.charCodeAt(0)) {
+                throw new Error(`Rango inválido: [${inicio}-${fin}]`);
+            }
+
+            return nuevoNodo("rango", { inicio, fin })
+        }
+        / $[^\[\]]
 
 // Regla para validar un rango como [A-Z]
-rango
-    = inicio:caracter "-" fin:caracter {
-        if (inicio.charCodeAt(0) > fin.charCodeAt(0)) {
-            throw new Error(`Rango inválido: [${inicio}-${fin}]`);
+// rango
+//     = inicio:caracter "-" fin:caracter {
+//         if (inicio.charCodeAt(0) > fin.charCodeAt(0)) {
+//             throw new Error(`Rango inválido: [${inicio}-${fin}]`);
 
-        }
-        return {contenido:`${inicio}-${fin}`,rango:true};
-    }
+//         }
+//         return {contenido:`${inicio}-${fin}`,rango:true};
+//     }
 //[0,2,4,a,-,z]
 // Regla para caracteres individuales
-caracter
-    = [a-zA-Z0-9_ ] { return text()}
+// caracter
+//     = [a-zA-Z0-9_ ] { return text()}
 
 // Coincide con cualquier contenido que no incluya "]"
-contenido
-    = (corchete / texto)+
+// contenido
+//     = (corchete / texto)+
 
-corchete
-    = "[" contenido "]"   
+// corchete
+//     = "[" contenido "]"   
 
-texto
-    = [^\[\]]+
+// texto
+//     = [^\[\]]+
 
 literales = '"' value:stringDobleComilla* '"' { return value.join("") }
             / "'" value:stringSimpleComilla* "'" { return value.join("") }
