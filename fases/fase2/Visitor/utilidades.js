@@ -76,3 +76,17 @@ export const generarCaracteres = (caracteres) => {
     `
 }
 
+export const generarCaracteres_i = (caracteres) => {
+    if (caracteres.length === 0) return ''
+
+    return `
+    if (findloc([${caracteres
+        .map((caracter) => `"${caracter.toLowerCase()}"`)
+        .join(', ')}], toLower(input(i:i)), 1) > 0) then
+        token = input(cursor:i)
+        cursor = i + 1
+        has_token = .true.
+        return
+    end if
+    `
+}

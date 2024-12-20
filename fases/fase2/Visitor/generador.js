@@ -1,5 +1,5 @@
 import { BaseVisitor } from './visitor.js';
-import { cerraduras, generarCaracteres } from './utilidades.js';
+import { cerraduras, generarCaracteres, generarCaracteres_i } from './utilidades.js';
 import { Rango } from './nodos.js';
 
 
@@ -75,11 +75,19 @@ export class GeneradorVisitor extends BaseVisitor {
                 break;
             case 'corchetes':
 
-                if(node.post == undefined){
+                if(expresion.sense == undefined){
                     this.code += `
                     i = cursor
-                    ${generarCaracteres(node.exp.exp.filter((node) => typeof node === 'string'))}
-                    ${node.exp.exp.filter((node) => node instanceof Rango)
+                    ${generarCaracteres(expresion.exp.filter((node) => typeof node === 'string'))}
+                    ${expresion.exp.filter((node) => node instanceof Rango)
+                        .map((rango) => rango.accept(this))
+                        .join('\n')}
+                    `
+                }else{
+                    this.code += `
+                    i = cursor
+                    ${generarCaracteres_i(expresion.exp.filter((node) => typeof node === 'string'))}
+                    ${expresion.exp.filter((node) => node instanceof Rango)
                         .map((rango) => rango.accept(this))
                         .join('\n')}
                     `
