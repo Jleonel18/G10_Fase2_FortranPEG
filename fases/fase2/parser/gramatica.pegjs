@@ -58,8 +58,8 @@ varios = op:("!"/"$"/"@"/"&") { return op }
 expresiones  =  id:identificador { usos.push(id) }
                 / exp:literales sense:"i"? { return { tipo:'literal', exp, sense } }
                 / "(" _ opciones _ ")"
-                / exp:corchetes sense:"i"? { return { tipo:'corchetes', exp, sense } }
-                / "." { return { tipo: 'punto' } }
+                / exp:corchetes sense:"i"? {return { tipo:'corchetes', exp, sense } }
+                / "."
                 / "!."
 
 // conteo = "|" parteconteo _ (_ delimitador )? _ "|"
