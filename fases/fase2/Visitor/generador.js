@@ -96,12 +96,35 @@ export class GeneradorVisitor extends BaseVisitor {
                 break;
                 
             case 'punto':
-                this.code += `
+                if(node.post == undefined){
+                    this.code += `
                     token = input(cursor:cursor)
                     cursor = cursor + 1
                     has_token = .true.
                     return
                     `
+                }else{
+                    if(node.post != "?"){
+
+                        this.code +=`
+                        do while (cursor <= len(input))
+                            token = input(cursor:cursor)
+                            cursor = cursor + 1
+                            has_token = .true.
+                            return
+                        end do
+                        `
+
+                    }else{
+                        this.code += `
+                        token = input(cursor:cursor)
+                        cursor = cursor + 1
+                        has_token = .true.
+                        return
+                        `
+                    }
+                }
+                
 
                 break
             
