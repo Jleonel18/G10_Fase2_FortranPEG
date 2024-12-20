@@ -108,10 +108,9 @@ export class GeneradorVisitor extends BaseVisitor {
 
                         this.code +=`
                         do while (cursor <= len(input))
-                            token = input(cursor:cursor)
+                            token = token // input(cursor:cursor)
                             cursor = cursor + 1
                             has_token = .true.
-                            return
                         end do
                         `
 

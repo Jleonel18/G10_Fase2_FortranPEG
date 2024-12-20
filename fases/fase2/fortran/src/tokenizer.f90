@@ -37,7 +37,7 @@
     end if
     
                     
-        if (input(i:i) >= "4" .and. input(i:i) <= "5") then
+        if (input(i:i) >= "1" .and. input(i:i) <= "2") then
             token = input(cursor:i)
             cursor = i + 1
             has_token = .true.
@@ -45,11 +45,12 @@
         end if
         
                     
-                    token = input(cursor:cursor)
-                    cursor = cursor + 1
-                    has_token = .true.
-                    return
-                    
+                        do while (cursor <= len(input))
+                            token = token // input(cursor:cursor)
+                            cursor = cursor + 1
+                            has_token = .true.
+                        end do
+                        
 
                 if (.not. has_token) then
                 print *, "ERROR LEXICO -> ", '"'// input(cursor:cursor) // '"'
