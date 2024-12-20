@@ -44,14 +44,25 @@ export class GeneradorVisitor extends BaseVisitor {
             case 'literal':
                 if(node.post == undefined){
                     if(expresion.sense == undefined){
-                        this.code += `\n if (cursor + ${expresion.exp.length-1} <= len(input)) then
-                            if (input(cursor:cursor+${expresion.exp.length-1}) == "${expresion.exp}") then
-                                token = "cadena | ${expresion.exp}"
-                                has_token = .true.
-                                cursor = cursor + ${expresion.exp.length}
-                                return
+                        if(expresion.exp == " "){
+                            this.code += `\n
+                            if (cursor <= len_trim(input) .and. input(cursor:cursor) == " ") then
+                                token = "whitespace | ESPACIO"
+                                cursor = cursor + 1
+                            return  ! Exit the function after detecting space
                             end if
-                        end if \n`
+                            \n`
+                        }else{
+                            this.code += `\n 
+                            if (cursor + ${expresion.exp.length-1} <= len(input)) then
+                                if (input(cursor:cursor+${expresion.exp.length-1}) == "${expresion.exp}") then
+                                    token = "cadena | ${expresion.exp}"
+                                    has_token = .true.
+                                    cursor = cursor + ${expresion.exp.length}
+                                    return
+                                end if
+                            end if \n`
+                        }
                     }else{
                         this.code += `\n ! Crear una cadena temporal para comparar
                         if (cursor + ${expresion.exp.length-1} <= len_trim(input)) then
@@ -67,8 +78,25 @@ export class GeneradorVisitor extends BaseVisitor {
             
                     }
                 }else{
-                    if(expresion.sense == undefined){
+                    if(expresion.sense == undefined && expresion.exp != " "){
                         this.code += cerraduras(node.post,expresion.exp)
+                    }else if(expresion.sense == undefined && expresion.exp == " "){
+                        this.code += `\n
+                        if (cursor <= len_trim(input) .and. input(cursor:cursor) == " ") then
+                            start_cursor = cursor
+                            repeat_count = 0
+                            
+                            ! Contar cuántos espacios consecutivos hay
+                            do while (cursor <= len_trim(input) .and. input(cursor:cursor) == " ")
+                                cursor = cursor + 1
+                                repeat_count = repeat_count + 1
+                            end do
+                            
+                            ! Construir el token con los espacios encontrados
+                            token = "whitespace | " // repeat(" ", repeat_count)
+                            return
+                        end if
+                        \n`
                     }
                 }
 
