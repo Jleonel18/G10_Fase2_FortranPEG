@@ -28,7 +28,7 @@ module tokenizer
             
                 i = cursor
                 
-                if (findloc(["a", "b", "c"], toLower(input(i:i)), 1) > 0) then
+                if (findloc(["a", "b", "c"], ToLower(input(i:i)), 1) > 0) then
                     token = input(cursor:i)
                     cursor = i + 1
                     has_token = .true.
