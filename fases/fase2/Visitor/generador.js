@@ -106,8 +106,7 @@ export class GeneradorVisitor extends BaseVisitor {
                 } 
                 //Cuando me viene un rango combinado con caracters
                 else{
-                    let cadenas =procesarCadena(expresion.exp)
-                    console.log(cadenas)
+           
                 }
                 break;
             
