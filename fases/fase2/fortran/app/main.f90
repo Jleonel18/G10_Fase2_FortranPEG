@@ -2,7 +2,7 @@ program main
     use tokenizer
     implicit none
 
-    character(len=*), parameter :: input = "abcBCABaCs"
+    character(len=*), parameter :: input = "abc12e3;l'{}+'¿"
     character(len=:), allocatable :: lexeme
     integer :: cursor
 

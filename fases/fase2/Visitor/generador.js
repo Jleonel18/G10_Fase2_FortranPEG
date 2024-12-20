@@ -94,6 +94,16 @@ export class GeneradorVisitor extends BaseVisitor {
                 }
 
                 break;
+                
+            case 'punto':
+                this.code += `
+                    token = input(cursor:cursor)
+                    cursor = cursor + 1
+                    has_token = .true.
+                    return
+                    `
+
+                break
             
         }
 
