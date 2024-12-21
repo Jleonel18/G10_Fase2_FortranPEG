@@ -1,5 +1,5 @@
 import { BaseVisitor } from './visitor.js';
-import { cerraduras, generarCaracteres, generarCaracteres_i } from './utilidades.js';
+import { cerraduras, generarCaracteres, generarCaracteres_i, cerradurasI } from './utilidades.js';
 import { Rango } from './nodos.js';
 
 
@@ -47,7 +47,7 @@ export class GeneradorVisitor extends BaseVisitor {
                         if(expresion.exp == " "){
                             this.code += `\n
                             if (cursor <= len_trim(input) .and. input(cursor:cursor) == " ") then
-                                token = "whitespace | ESPACIO"
+                                token = "whitespace | " // '"' // input(cursor:cursor) // '"'
                                 cursor = cursor + 1
                             return  ! Exit the function after detecting space
                             end if
@@ -80,7 +80,7 @@ export class GeneradorVisitor extends BaseVisitor {
                 }else{
                     if(expresion.sense == undefined && expresion.exp != " "){
                         this.code += cerraduras(node.post,expresion.exp)
-                    }else if(expresion.sense == undefined && expresion.exp == " "){
+                    }else if(expresion.exp == " "){
                         this.code += `\n
                         if (cursor <= len_trim(input) .and. input(cursor:cursor) == " ") then
                             start_cursor = cursor
@@ -93,10 +93,12 @@ export class GeneradorVisitor extends BaseVisitor {
                             end do
                             
                             ! Construir el token con los espacios encontrados
-                            token = "whitespace | " // repeat(" ", repeat_count)
+                            token = "whitespace | " // '"' // repeat(" ", repeat_count) // '"'
                             return
                         end if
                         \n`
+                    }else{
+                        this.code += cerradurasI(node.post,expresion.exp)
                     }
                 }
 

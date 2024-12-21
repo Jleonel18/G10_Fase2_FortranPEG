@@ -152,7 +152,7 @@ const generarFortran=(code)=>{
             character(len=:), allocatable :: token
             integer :: start_cursor, repeat_count
             character(len=:), allocatable :: temp_string
-            character(len=:), allocatable :: original_string
+            character(len=:), allocatable :: original_string, new_string
             integer :: i
         
             logical :: has_token
