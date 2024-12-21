@@ -212,8 +212,9 @@ export class Rango  {
     * @param {Object} options
     * @param {string} options.inicio Inicio del rango
  * @param {string} options.fin Fin del rango
+ * @param {string|undefined} options.sense Case insensitive
     */
-    constructor({ inicio, fin }) {
+    constructor({ inicio, fin, sense }) {
         
         
         /**
@@ -228,6 +229,13 @@ export class Rango  {
          * @type {string}
         */
         this.fin = fin;
+
+
+        /**
+         * Case insensitive
+         * @type {string|undefined}
+        */
+        this.sense = sense;
 
     }
 

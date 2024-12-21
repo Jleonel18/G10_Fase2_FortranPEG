@@ -206,14 +206,53 @@ export class GeneradorVisitor extends BaseVisitor {
      * @type {BaseVisitor['visitRango']}
      */
     visitRango(node) {
-        return `
-        if (input(i:i) >= "${node.inicio}" .and. input(i:i) <= "${node.fin}") then
-            token = input(cursor:i)
-            cursor = i + 1
-            has_token = .true.
-            return
-        end if
-        `
-    }
 
+        if(node.sense == undefined){
+            return `
+            if (input(i:i) >= "${node.inicio}" .and. input(i:i) <= "${node.fin}") then
+                token = input(cursor:i)
+                cursor = i + 1
+                has_token = .true.
+                return
+            end if
+            `
+        }  else{
+            return `
+            if (ToLower(input(i:i)) >= "${node.inicio.toLowerCase()}" .and. ToLower(input(i:i)) <= "${node.fin.toLowerCase()}") then
+                token = input(cursor:i)
+                cursor = i + 1
+                has_token = .true.
+                return
+            end if
+            `
+
+            /*
+             return `
+                if (input(i:i) >="${node.inicio}" .and. input(i:i) <="${node.fin}") then
+                    ! Verifica si el carácter está en el rango de letras minúsculas
+                    if (input(i:i) >= "a" .and. input(i:i) <= "z") then
+                        token = input(cursor:i)
+                        cursor = i + 1
+                        has_token = .true.
+                        return
+                    end if
+
+                    ! Verifica si el carácter está en el rango ajustado (mayúsculas)
+                    if (input(i:i) >= "${node.inicio.charCodeAt(0)-32}" .and. input(i:i) <= "${node.fin.charCodeAt(0)-32}") then
+                        token = input(cursor:i)
+                        cursor = i + 1
+                        has_token = .true.
+                        return
+                    end if
+                else if (input(i:i) >= "${node.inicio}" .and. input(i:i) <= "${node.fin}") then
+                    token = input(cursor:i)
+                    cursor = i + 1
+                    has_token = .true.
+                    return
+                end if
+            `
+            */
+        }
+
+}
 }

@@ -55,10 +55,23 @@ etiqueta = pluck:("@")? _ id:identificador _ ":" simb:(varios)? { return { pluck
 
 varios = op:("!"/"$"/"@"/"&") { return op }
 
-expresiones  =  id:identificador { usos.push(id) }
+expresiones  =  id:identificador { usos.push(id) ; return { tipo:'identificador', id } }
                 / exp:literales sense:"i"? { return { tipo:'literal', exp, sense } }
-                / "(" _ opciones _ ")"
-                / exp:corchetes sense:"i"? {return { tipo:'corchetes', exp, sense } }
+                / "(" _ opciones _ ")" {return {tipo:"grupo"}}
+                / exp1:corchetes sense:"i"? { 
+                    console.log(exp1)
+                   const array= exp1.map (exp=>{
+                        console.log(exp)
+                        if(exp.inicio!=undefined ){
+                            console.log("Entra a rango")
+                            return nuevoNodo("rango", { inicio:exp.inicio, fin:exp.fin,sense })
+                        }else{
+                            return exp 
+                        }
+                    })
+                    console.log(array)
+                    return { tipo:'corchetes', exp:array, sense }
+                    } 
                 / "."
                 / "!."
 
@@ -77,16 +90,16 @@ conteo = "|" _ (numero / id:identificador) _ "|"
 
 // Regla principal que analiza corchetes con contenido
 corchetes
-    = "[" @contenido+ "]" 
+    = "["  @contenido+ "]" 
 
 contenido = inicio:$[^\[\]] "-" fin:$[^\[\]] {
             if (inicio.charCodeAt(0) > fin.charCodeAt(0)) {
                 throw new Error(`Rango inválido: [${inicio}-${fin}]`);
             }
 
-            return nuevoNodo("rango", { inicio, fin })
+            return  { inicio, fin }
         }
-        / $[^\[\]]
+        / $[^\[\]] 
 
 // Regla para validar un rango como [A-Z]
 // rango
