@@ -155,3 +155,49 @@ export const generarCaracteres_i = (caracteres) => {
     end if
     `
 }
+
+export const generarCaracteresCerraduras_i = (caracteres) => {
+    return `
+    ! Avanzamos mientras encontremos caracteres válidos
+            do while (i <= len_trim(input))
+                if (findloc([${caracteres
+                .map((caracter) => `"${caracter.toLowerCase()}"`)
+                .join(', ')}], ToLower(input(i:i)), 1) > 0) then
+                    i = i + 1
+                else
+                    exit
+                end if
+            end do
+            
+            ! Si encontramos al menos un carácter válido
+            if (i > cursor) then
+                token = input(cursor:i-1)
+                cursor = i
+                has_token = .true.
+                return
+            end if    
+    `
+}
+
+export const generarCaracteresCerraduras = (caracteres) => {
+    return `
+    ! Avanzamos mientras encontremos caracteres válidos
+            do while (i <= len_trim(input))
+                if (findloc([${caracteres
+                .map((caracter) => `"${caracter}"`)
+                .join(', ')}], input(i:i), 1) > 0) then
+                    i = i + 1
+                else
+                    exit
+                end if
+            end do
+            
+            ! Si encontramos al menos un carácter válido
+            if (i > cursor) then
+                token = input(cursor:i-1)
+                cursor = i
+                has_token = .true.
+                return
+            end if    
+    `
+}

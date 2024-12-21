@@ -59,20 +59,17 @@ expresiones  =  id:identificador { usos.push(id) ; return { tipo:'identificador'
                 / exp:literales sense:"i"? { return { tipo:'literal', exp, sense } }
                 / "(" _ opciones _ ")" {return {tipo:"grupo"}}
                 / exp1:corchetes sense:"i"? { 
-                    console.log(exp1)
-                   const array= exp1.map (exp=>{
-                        console.log(exp)
+                    
+                    const array= exp1.map (exp=>{
                         if(exp.inicio!=undefined ){
-                            console.log("Entra a rango")
                             return nuevoNodo("rango", { inicio:exp.inicio, fin:exp.fin,sense })
                         }else{
                             return exp 
                         }
                     })
-                    console.log(array)
                     return { tipo:'corchetes', exp:array, sense }
                     } 
-                / "."
+                / "." { return { tipo:'punto' } }
                 / "!."
 
 // conteo = "|" parteconteo _ (_ delimitador )? _ "|"

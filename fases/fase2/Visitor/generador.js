@@ -1,5 +1,5 @@
 import { BaseVisitor } from './visitor.js';
-import { cerraduras, generarCaracteres, generarCaracteres_i, cerradurasI } from './utilidades.js';
+import { cerraduras, generarCaracteres, generarCaracteres_i, cerradurasI, generarCaracteresCerraduras, generarCaracteresCerraduras_i } from './utilidades.js';
 import { Rango } from './nodos.js';
 
 
@@ -8,6 +8,7 @@ export class GeneradorVisitor extends BaseVisitor {
     constructor() { 
         super();
         this.code = '';
+        this.rango_bandera = false;
     }
 
     
@@ -106,21 +107,45 @@ export class GeneradorVisitor extends BaseVisitor {
             case 'corchetes':
 
                 if(expresion.sense == undefined){
-                    this.code += `
-                    i = cursor
-                    ${generarCaracteres(expresion.exp.filter((node) => typeof node === 'string'))}
-                    ${expresion.exp.filter((node) => node instanceof Rango)
-                        .map((rango) => rango.accept(this))
-                        .join('\n')}
-                    `
+                    if(node.post == undefined || node.post == "?"){
+                        this.code += `
+                        i = cursor
+                        ${generarCaracteres(expresion.exp.filter((node) => typeof node === 'string'))}
+                        ${expresion.exp.filter((node) => node instanceof Rango)
+                            .map((rango) => rango.accept(this))
+                            .join('\n')}
+                        `
+                    }else{
+                            this.rango_bandera = true;
+                            this.code += `
+                            i = cursor
+                            ${generarCaracteresCerraduras(expresion.exp.filter((node) => typeof node === 'string'))}
+                            ${expresion.exp.filter((node) => node instanceof Rango)
+                                .map((rango) => rango.accept(this))
+                                .join('\n')}
+                            `
+                        
+                    }
                 }else{
-                    this.code += `
-                    i = cursor
-                    ${generarCaracteres_i(expresion.exp.filter((node) => typeof node === 'string'))}
-                    ${expresion.exp.filter((node) => node instanceof Rango)
-                        .map((rango) => rango.accept(this))
-                        .join('\n')}
-                    `
+                    if(node.post == undefined || node.post == "?"){
+                        this.code += `
+                        i = cursor
+                        ${generarCaracteres_i(expresion.exp.filter((node) => typeof node === 'string'))}
+                        ${expresion.exp.filter((node) => node instanceof Rango)
+                            .map((rango) => rango.accept(this))
+                            .join('\n')}
+                        `
+
+                    }else{
+                        this.rango_bandera = true;
+                            this.code += `
+                            i = cursor
+                            ${generarCaracteresCerraduras_i(expresion.exp.filter((node) => typeof node === 'string'))}
+                            ${expresion.exp.filter((node) => node instanceof Rango)
+                                .map((rango) => rango.accept(this))
+                                .join('\n')}
+                            `
+                    }
                 }
 
                 break;
@@ -208,50 +233,68 @@ export class GeneradorVisitor extends BaseVisitor {
     visitRango(node) {
 
         if(node.sense == undefined){
-            return `
-            if (input(i:i) >= "${node.inicio}" .and. input(i:i) <= "${node.fin}") then
-                token = input(cursor:i)
-                cursor = i + 1
-                has_token = .true.
-                return
-            end if
-            `
-        }  else{
-            return `
-            if (ToLower(input(i:i)) >= "${node.inicio.toLowerCase()}" .and. ToLower(input(i:i)) <= "${node.fin.toLowerCase()}") then
-                token = input(cursor:i)
-                cursor = i + 1
-                has_token = .true.
-                return
-            end if
-            `
-
-            /*
-             return `
-                if (input(i:i) >="${node.inicio}" .and. input(i:i) <="${node.fin}") then
-                    ! Verifica si el carácter está en el rango de letras minúsculas
-                    if (input(i:i) >= "a" .and. input(i:i) <= "z") then
-                        token = input(cursor:i)
-                        cursor = i + 1
-                        has_token = .true.
-                        return
-                    end if
-
-                    ! Verifica si el carácter está en el rango ajustado (mayúsculas)
-                    if (input(i:i) >= "${node.inicio.charCodeAt(0)-32}" .and. input(i:i) <= "${node.fin.charCodeAt(0)-32}") then
-                        token = input(cursor:i)
-                        cursor = i + 1
-                        has_token = .true.
-                        return
-                    end if
-                else if (input(i:i) >= "${node.inicio}" .and. input(i:i) <= "${node.fin}") then
+            if(this.rango_bandera == false){
+                return `\n
+                if (input(i:i) >= "${node.inicio}" .and. input(i:i) <= "${node.fin}") then
                     token = input(cursor:i)
                     cursor = i + 1
                     has_token = .true.
                     return
                 end if
-            `
-            */
+                \n
+                `
+            }else{
+                this.rango_bandera = false;
+                return `\n
+                if (input(cursor:cursor) >= "${node.inicio}" .and. input(cursor:cursor) <= "${node.fin}") then
+                    ! Avanzamos mientras encontremos caracteres en el rango
+                    do while (cursor <= len_trim(input))
+                        if (input(cursor:cursor) >= "${node.inicio}" .and. input(cursor:cursor) <= "${node.fin}") then
+                            cursor = cursor + 1
+                        else
+                            exit
+                        end if
+                    end do
+                    ! Extraemos la cadena completa que encontramos
+                    token = input(i:cursor-1)
+                    has_token = .true.
+                    return
+                end if
+                \n
+                `
+            }
+            
+        }  else{
+            if(this.rango_bandera == false){
+                return `\n
+                if (ToLower(input(i:i)) >= "${node.inicio.toLowerCase()}" .and. ToLower(input(i:i)) <= "${node.fin.toLowerCase()}") then
+                    token = input(cursor:i)
+                    cursor = i + 1
+                    has_token = .true.
+                    return
+                end if
+                \n
+                `
+            }else{
+                this.rango_bandera = false;
+                return `\n
+                if (ToLower(input(cursor:cursor)) >= "${node.inicio.toLowerCase()}" .and. ToLower(input(cursor:cursor)) <= "${node.fin.toLowerCase()}") then
+                    ! Avanzamos mientras encontremos caracteres en el rango
+                    do while (cursor <= len_trim(input))
+                        if (ToLower(input(cursor:cursor)) >= "${node.inicio.toLowerCase()}" .and. ToLower(input(cursor:cursor)) <= "${node.fin.toLowerCase()}") then
+                            cursor = cursor + 1
+                        else
+                            exit
+                        end if
+                    end do
+                    ! Extraemos la cadena completa que encontramos
+                    token = input(i:cursor-1)
+                    has_token = .true.
+                    return
+                end if
+                `
+            }
+
         }
 
 }
